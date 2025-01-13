@@ -54,7 +54,7 @@ Check_package host /usr/bin/wget wget
 FIRMWARE_PACKAGES=""
 
 # Manually add firmware-linux meta package if available
-if [ $(apt-cache show "^firmware-linux$" 2> /dev/null | grep "^Package:" | wc -l) -eq 1 ]
+if [ $(Check_package_available "firmware-linux") -eq 1 ]
 then
 	FIRMWARE_PACKAGES="${FIRMWARE_PACKAGES} firmware-linux"
 fi

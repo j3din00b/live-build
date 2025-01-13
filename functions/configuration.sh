@@ -314,6 +314,11 @@ Prepare_config ()
 				LB_BOOTLOADER_EFI="${LB_BOOTLOADER_EFI:-grub-efi}"
 			fi
 			;;
+		arm64)
+			if ! In_list "${LB_IMAGE_TYPE}" hdd netboot; then
+				LB_BOOTLOADER_EFI="${LB_BOOTLOADER_EFI:-grub-efi}"
+			fi
+			;;
 	esac
 	# Command line option combines BIOS and EFI selection in one.
 	# Also, need to support old config files that held `LB_BOOTLOADERS`.
@@ -389,12 +394,12 @@ Prepare_config ()
 	case "${LB_INITRAMFS}" in
 		live-boot)
 			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-boot=live components quiet splash}"
-			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=live components memtest noapic noapm nodma nomce nolapic nosmp nosplash vga=788}"
+			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-boot=live components memtest noapic noapm nodma nomce nosmp nosplash vga=788}"
 			;;
 
 		none)
 			LB_BOOTAPPEND_LIVE="${LB_BOOTAPPEND_LIVE:-quiet splash}"
-			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-memtest noapic noapm nodma nomce nolapic nosmp nosplash vga=788}"
+			LB_BOOTAPPEND_LIVE_FAILSAFE="${LB_BOOTAPPEND_LIVE_FAILSAFE:-memtest noapic noapm nodma nomce nosmp nosplash vga=788}"
 			;;
 	esac
 
@@ -485,7 +490,7 @@ Prepare_config ()
 	if [ -n "${LB_BOOTSTRAP_QEMU_ARCHITECTURES}" ]; then
 		LB_BOOTSTRAP_QEMU_ARCHITECTURE="${LB_BOOTSTRAP_QEMU_ARCHITECTURES}"
 		unset LB_BOOTSTRAP_QEMU_ARCHITECTURES
-		Echo_warning "LB_BOOTSTRAP_QEMU_ARCHITECTURES was renamed to LB_BOOTSTRAP_QEMU_ARCHITECTURE, please updated your config."
+		Echo_warning "LB_BOOTSTRAP_QEMU_ARCHITECTURES was renamed to LB_BOOTSTRAP_QEMU_ARCHITECTURE, please update your config."
 	fi
 	LB_BOOTSTRAP_QEMU_ARCHITECTURE="${LB_BOOTSTRAP_QEMU_ARCHITECTURE:-}"
 	LB_BOOTSTRAP_QEMU_EXCLUDE="${LB_BOOTSTRAP_QEMU_EXCLUDE:-}"
@@ -730,7 +735,7 @@ Validate_config_permitted_values ()
 		Echo_warning "You have specified a value of LB_ISO_VOLUME (--iso-volume) that is too long; the maximum length is 32 characters."
 	fi
 
-	if ! In_list "${LB_MEMTEST}" memtest86+ memtest86 none; then
+	if ! In_list "${LB_MEMTEST}" memtest86+ none; then
 		Echo_error "You have specified an invalid value for LB_MEMTEST (--memtest)."
 		exit 1
 	fi
@@ -748,6 +753,22 @@ Validate_config_permitted_values ()
 	if ! In_list "${LB_UEFI_SECURE_BOOT}" auto enable disable; then
 		Echo_error "You have specified an invalid value for LB_UEFI_SECURE_BOOT (--uefi-secure-boot)."
 		exit 1
+	fi
+
+	if [ -n "${LB_BOOTSTRAP_QEMU_ARCHITECTURE}" ]; then
+		if [ -z "${LB_BOOTSTRAP_QEMU_STATIC}" ]; then
+			Echo_error "You have not specified the qemu-static binary for ${LB_BOOTSTRAP_QEMU_ARCHITECTURE} (--bootstrap-qemu-static)"
+			exit 1
+		fi
+		if [ ! -e "${LB_BOOTSTRAP_QEMU_STATIC}" ]; then
+			Echo_error "The qemu-static binary (${LB_BOOTSTRAP_QEMU_STATIC}) for ${LB_BOOTSTRAP_QEMU_ARCHITECTURE} was not found on the host"
+			exit 1
+		fi
+
+		if [ ! -x "${LB_BOOTSTRAP_QEMU_STATIC}" ]; then
+			Echo_error "The qemu-static binary (${LB_BOOTSTRAP_QEMU_STATIC}) for ${LB_BOOTSTRAP_QEMU_ARCHITECTURE} is not executable on the host"
+			exit 1
+		fi
 	fi
 }
 
