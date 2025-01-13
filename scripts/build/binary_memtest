@@ -61,6 +61,10 @@ fi
 _MEMTEST_BIN="${LB_MEMTEST}"
 _MEMTEST_BIOS_FN="memtest"
 case "${LB_MEMTEST}" in
+	memtest86)
+		Check_package chroot /boot/memtest86.bin memtest86
+		;;
+
 	memtest86+)
 		Check_package chroot /usr/share/doc/memtest86+/copyright memtest86+
 		;;

@@ -90,7 +90,7 @@ USAGE="${PROGRAM} [--apt apt|apt-get|aptitude]\n\
 \t    [-k|--linux-flavours FLAVOUR|\"FLAVOURS\"]\n\
 \t    [--linux-packages PACKAGE|\"PACKAGES\"]\n\
 \t    [--loadlin true|false]\n\
-\t    [--memtest memtest86+|none]\n\
+\t    [--memtest memtest86+|memtest86|none]\n\
 \t    [--mirror-binary URL]\n\
 \t    [--mirror-binary-security URL]\n\
 \t    [--mirror-bootstrap URL]\n\

@@ -52,14 +52,34 @@ VERSION="${VERSION:-none}"
 case "${LB_MODE}" in
 	debian)
 		TITLE="Debian GNU/Linux"
-		STRING="Snapshot ${ARCHITECTURE}"
+		STRING="Official Snapshot ${ARCHITECTURE}"
+		TRACE="project/trace/ftp-master.debian.org"
 		;;
 
 	*)
 		TITLE="Debian GNU/Linux"
 		STRING="Snapshot ${ARCHITECTURE}"
+		TRACE=""
 		;;
 esac
+
+if [ -n "${TRACE}" ]
+then
+	case "${LB_DERIVATIVE}" in
+		true)
+			echo "$(echo ${LB_PARENT_MIRROR_BOOTSTRAP} | awk -F:// '{ print $2 }'): $(wget -q ${LB_PARENT_MIRROR_BOOTSTRAP}/${TRACE} -O - | head -n 1)" \
+			> binary/.disk/archive_trace
+
+			echo "$(echo ${LB_MIRROR_BOOTSTRAP} | awk -F:// '{ print $2 }'): $(wget -q ${LB_MIRROR_BOOTSTRAP}/${TRACE} -O - | head -n 1)" \
+			>> binary/.disk/archive_trace
+			;;
+
+		false)
+			echo "$(wget -q ${LB_PARENT_MIRROR_BOOTSTRAP}/${TRACE} -O - | head -n 1)" \
+			> binary/.disk/archive_trace
+			;;
+	esac
+fi
 
 case "${LB_DEBIAN_INSTALLER}" in
 	cdrom)
@@ -125,14 +145,7 @@ do
 				cp -a "${LOCATION}/${LB_PARENT_DISTRIBUTION_BINARY}/${LB_ARCHITECTURE}_udeb_include" binary/.disk/udeb_include
 				;;
 			netinst|live)
-				if [ -r "${LOCATION}/${LB_PARENT_DISTRIBUTION_BINARY}/${LB_ARCHITECTURE}_netinst_udeb_include" ]
-				then
-					cp -a "${LOCATION}/${LB_PARENT_DISTRIBUTION_BINARY}/${LB_ARCHITECTURE}_netinst_udeb_include" binary/.disk/udeb_include
-					if [ "${LB_DEBIAN_INSTALLER}" = "live" ]
-					then
-						echo "live-installer" >> binary/.disk/udeb_include
-					fi
-				fi
+				cp -a "${LOCATION}/${LB_PARENT_DISTRIBUTION_BINARY}/${LB_ARCHITECTURE}_netinst_udeb_include" binary/.disk/udeb_include
 				;;
 			businesscard)
 				cp -a "${LOCATION}/${LB_PARENT_DISTRIBUTION_BINARY}/${LB_ARCHITECTURE}_businesscard_udeb_include" binary/.disk/udeb_include
@@ -143,6 +156,11 @@ do
 		esac
 	fi
 done
+
+if [ "${LB_DEBIAN_INSTALLER}" = "live" ]
+then
+	echo "live-installer" >> binary/.disk/udeb_include
+fi
 
 # Creating stage file
 Create_stagefile
