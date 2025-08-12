@@ -1,5 +1,6 @@
-kaisen-fix-persistent-iso
-kaisen-drop-the-support-of-memtest86
-kaisen-remove-live-cdrom-sourceslist
-kaisen-umount-sysfs-recursive
-kaisen-drop-grub-signed-and-shim
+kaisen-remove-live-cdrom-sourceslist.patch
+kaisen-drop-grub-signed-and-shim.patch
+kaisen-drop-the-support-of-memtest86.patch
+kaisen-fix-persistent-iso.patch
+kaisen-umount-sysfs-recursive.patch
+use-kaisen-archive-keyring.patch

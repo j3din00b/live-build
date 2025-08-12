@@ -1,0 +1,22 @@
+Author: Kevin Chevreuil - Kaisen <kaisen@kaisenlinux.org>
+
+--- live-build-20250810.orig/scripts/build/installer_debian-installer
++++ live-build-20250810/scripts/build/installer_debian-installer
+@@ -758,7 +758,7 @@ EOF
+ 		URIs: ${LB_PARENT_MIRROR_CHROOT}
+ 		Suites: ${LB_PARENT_DEBIAN_INSTALLER_DISTRIBUTION}
+ 		Components: main/debian-installer ${LB_PARENT_ARCHIVE_AREAS}
+-		Signed-by: /usr/share/keyrings/debian-archive-keyring.gpg
++		Signed-by: /usr/share/keyrings/kaisen-archive-keyring.gpg
+ 		EOF
+ 
+ 	# TODO: Untested path, LB_DERIVATIVE is always false
+@@ -769,7 +769,7 @@ EOF
+ 			URIs: ${LB_MIRROR_CHROOT}
+ 			Suites: ${LB_DEBIAN_INSTALLER_DISTRIBUTION}
+ 			Components: main/debian-installer ${LB_ARCHIVE_AREAS}
+-			Signed-by: /usr/share/keyrings/debian-archive-keyring.gpg
++			Signed-by: /usr/share/keyrings/kaisen-archive-keyring.gpg
+ 			EOF
+ 	fi
+ 
